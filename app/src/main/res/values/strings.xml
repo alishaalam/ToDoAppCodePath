@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ListIt</string>
+    <string name="etNewItemHint">Enter a new item</string>
+    <string name="btnAddItemValue">Add Item</string>
+    <string name="tvEditItem">Edit Item Below</string>
+    <string name="btnSaveItemValue">Save Item</string>
+</resources>
