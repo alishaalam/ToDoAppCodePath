@@ -27,7 +27,7 @@ The following **optional** features will be implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://github.com/alishaalam/ToDoAppCodePath/blob/master/app/src/main/Listit.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/alishaalam/ToDoAppCodePath/blob/a821afc7ef4504485d59ac83a8f42d621caf18d5/ListItFaster.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 ## Notes
 Couldn't get Licecap to work for Mac
