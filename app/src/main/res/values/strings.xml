@@ -4,4 +4,6 @@
     <string name="btnAddItemValue">Add Item</string>
     <string name="tvEditItem">Edit Item Below</string>
     <string name="btnSaveItemValue">Save Item</string>
+    <string name="action_add_todo">Add item</string>
+    <string name="action_settings">Settings</string>
 </resources>
