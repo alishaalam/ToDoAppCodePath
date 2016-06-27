@@ -1,7 +1,8 @@
 package com.happytimes.alisha.listit;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,19 +12,20 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.happytimes.alisha.com.happytimes.alisha.fragments.EditTaskDialogFragment;
 import com.happytimes.alisha.database.Task;
 import com.happytimes.alisha.database.TaskReaderDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoActivity extends AppCompatActivity {
+public class TodoActivity extends AppCompatActivity implements EditTaskDialogFragment.EditTaskDialogListener {
 
     List<Task> taskList;
     ArrayAdapter<Task> taskAdapter;
     ListView listView;
 
-    static final String TAG = "MainActivity";
+    static final String TAG = "TodoActivity";
     static final int EDIT_ITEM_REQUEST = 1; //request code
     static final String ITEM_POSITION = "com.happytimes.alisha.listit.ITEM_POSITION";
     static final String ITEM_NAME = "com.happytimes.alisha.listit.ITEM_NAME";
@@ -37,9 +39,9 @@ public class TodoActivity extends AppCompatActivity {
         dbHelper = TaskReaderDatabaseHelper.getInstance(this);
         listView = (ListView) findViewById(R.id.lvItems);
         taskList = new ArrayList<>();
-        //taskAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, taskList);
-        //listView.setAdapter(taskAdapter);
+
         setUpListViewListener();
+
     }
 
     @Override
@@ -57,10 +59,12 @@ public class TodoActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                taskList.remove(position);
                 Task selectedTask = (Task) parent.getItemAtPosition(position);
                 dbHelper.deleteTask(selectedTask.getId());
+
+                taskList.remove(position);
                 taskAdapter.notifyDataSetChanged();
+
                 return true;
             }
 
@@ -72,40 +76,18 @@ public class TodoActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 Task selectedTask = (Task) parent.getItemAtPosition(position);
-                Intent intent = new Intent(TodoActivity.this, EditItemActivity.class);
-                intent.putExtra(ITEM_POSITION, position);
-                intent.putExtra(ITEM_NAME, selectedTask.getTitle());
-                Log.i("MainActivity: ", " Item: " + selectedTask);
-                Log.i("MainActivity: ", "Position: " + position);
-                startActivityForResult(intent, EDIT_ITEM_REQUEST);
+                showEditTaskDialog(selectedTask, position);
             }
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_ITEM_REQUEST && resultCode == RESULT_OK) {
-            String editedTitle = data.getExtras().getString(EditItemActivity.EDITED_ITEM);
-            int editedPosition = data.getExtras().getInt(EditItemActivity.EDITED_POSITION);
-            Log.i("MainActivity: ", " Returned Position: " + editedPosition);
-            Log.i("MainActivity: ", " Returned Item: " + editedTitle);
+    private void showEditTaskDialog(Task selectedTask, int position) {
+        FragmentManager fm = getSupportFragmentManager();
+        EditTaskDialogFragment alertDialog = EditTaskDialogFragment.newInstance(selectedTask, position);
+        alertDialog.show(fm, TAG);
 
-            Task editedTask = new Task(editedTitle, "Returned Desc");
-
-            if (editedPosition != -1) {
-                taskList.set(editedPosition, editedTask);
-            }
-
-            taskAdapter.notifyDataSetChanged();
-            updateTaskDB(editedTask);
-        }
     }
 
-    private void updateTaskDB(Task task) {
-        int updatedId = dbHelper.updateTask(task);
-        Log.d(TAG, "Updated row Id" + updatedId);
-    }
 
     public void onAddItem(View view) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
@@ -124,7 +106,7 @@ public class TodoActivity extends AppCompatActivity {
         taskList.addAll(list);
 
         Log.d(TAG, "List size" + taskList.size());
-        if(taskAdapter == null){
+        if (taskAdapter == null) {
             taskAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, taskList);
         }
 
@@ -138,9 +120,10 @@ public class TodoActivity extends AppCompatActivity {
         }
     }
 
-    private void writeToDB(Task task) {
+    private long writeToDB(Task task) {
         long newRowId = dbHelper.insertTask(task);
         Log.d(TAG, "Inserted row Id" + newRowId);
+        return newRowId;
     }
 
 
@@ -169,4 +152,23 @@ public class TodoActivity extends AppCompatActivity {
     }
 
 
+    // This method is invoked in the activity when the listener is triggered
+    // Access the data result passed to the activity here
+    @Override
+    public void onDialogSaveClick(Task editedTask, int position) {
+        dbHelper.updateTask(editedTask);
+
+        taskList.set(position, editedTask);
+        taskAdapter.notifyDataSetChanged();
+    }
+
+    private void updateTaskDB(Task task) {
+        int updatedId = dbHelper.updateTask(task);
+        Log.d(TAG, "Updated row Id" + updatedId);
+    }
+
+    @Override
+    public void onDialogCancelClick(DialogFragment dialog) {
+        dialog.dismiss();
+    }
 }

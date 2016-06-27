@@ -25,7 +25,7 @@ public class TaskReaderDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TaskReaderContract.TaskEntry.TABLE_NAME + " (" +
-                    TaskReaderContract.TaskEntry.COLUMN_NAME_ENTRY_ID + " INTEGER PRIMARY KEY," +
+                    TaskReaderContract.TaskEntry.COLUMN_NAME_ENTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     TaskReaderContract.TaskEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                     TaskReaderContract.TaskEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     TaskReaderContract.TaskEntry.COLUMN_NAME_DEADLINE + TEXT_TYPE + COMMA_SEP +
@@ -177,7 +177,7 @@ public class TaskReaderDatabaseHelper extends SQLiteOpenHelper {
                 new String[] { String.valueOf(task.getId()) });
     }
 
-    public void deleteTask(Integer rowId) {
+    public void deleteTask(int rowId) {
         //SQLiteDatabase db = mDbHelper.getReadableDatabase();
         SQLiteDatabase db = sInstance.getReadableDatabase();
 
