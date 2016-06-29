@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
@@ -38,6 +39,9 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbHelper = TaskReaderDatabaseHelper.getInstance(this);
+
+        setupToolbar();
+
         taskList = new ArrayList<>();
 
         recyclerListView = (RecyclerView) findViewById(R.id.cardList);
@@ -45,20 +49,35 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerListView.setLayoutManager(linearLayoutManager);
+    }
 
-
-
+    public void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         if (taskAdapter == null) {
-            taskAdapter = new TaskRecyclerAdapter(taskList);
+
+            taskAdapter = new TaskRecyclerAdapter(taskList, new TaskRecyclerAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(Task task, int position) {
+                    //Toast.makeText(TodoActivity.this, "Task touched!" + task.getTitle(), Toast.LENGTH_SHORT).show();
+                    showEditTaskDialog(task, position);
+                }
+            });
         }
+        recyclerListView.setAdapter(taskAdapter);
+
 
         loadFromDB();
+        setupCardTouchHelper();
+    }
 
+    private void setupCardTouchHelper() {
         ItemTouchHelper.Callback callback = new CardTouchHelper(taskAdapter);
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(recyclerListView);
@@ -106,7 +125,7 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
     public void onAddItem(View view) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String taskTitle = etNewItem.getText().toString();
-        Task t = new Task(taskTitle, "NORMAL");
+        Task t = new Task(taskTitle, "Normal");
         taskList.add(t);
         taskAdapter.notifyDataSetChanged();
         etNewItem.setText("");
@@ -116,14 +135,10 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
 
     private void loadFromDB() {
         List<Task> list = dbHelper.getAllTasks();
-
         taskList.clear();
         taskList.addAll(list);
 
         Log.d(TAG, "List size" + taskList.size());
-
-
-        recyclerListView.setAdapter(taskAdapter);
         taskAdapter.notifyDataSetChanged();
 
         for (Task task : taskList) {
@@ -183,4 +198,6 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
     public void onDialogCancelClick(DialogFragment dialog) {
         dialog.dismiss();
     }
+
+
 }

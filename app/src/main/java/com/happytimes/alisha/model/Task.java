@@ -17,10 +17,10 @@ public class Task {
     public Task() {
     }
 
-    public Task(int id, String title, String description) {
+    public Task(int id, String title, String priority) {
         this.id = id;
         this.title = title;
-        this.description = description;
+        this.priority = priority;
     }
 
     public Task(String title, String priority) {

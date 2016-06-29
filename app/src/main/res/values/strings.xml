@@ -13,5 +13,19 @@
     <string name="dialog_message">Dialog Message</string>
     <string name="dialog_title">Edit Task</string>
     <string name="titleHint">Enter Task</string>
-    <string name="descriptionHint">Enter task description</string>
+    <string name="etDescriptionHint">Enter task description</string>
+    <string name="priority">Priority</string>
+    <string name="status">Status</string>
+
+
+    <string-array name="task_priority">
+        <item>Normal</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="task_status">
+        <item>To-Do</item>
+        <item>Done</item>
+    </string-array>
 </resources>

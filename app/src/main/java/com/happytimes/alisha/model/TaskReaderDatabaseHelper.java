@@ -170,7 +170,7 @@ public class TaskReaderDatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(TaskReaderContract.TaskEntry.COLUMN_NAME_TITLE, task.getTitle());
-        values.put(TaskReaderContract.TaskEntry.COLUMN_NAME_DESCRIPTION, task.getDescription());
+        values.put(TaskReaderContract.TaskEntry.COLUMN_NAME_PRIORITY, task.getDescription());
 
         // updating row
         return db.update(TaskReaderContract.TaskEntry.TABLE_NAME, values, TaskReaderContract.TaskEntry.COLUMN_NAME_ENTRY_ID + " = ?",
