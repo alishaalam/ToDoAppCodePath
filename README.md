@@ -30,9 +30,9 @@ Here's a walkthrough of implemented user stories:
 <img src='https://github.com/alishaalam/ToDoAppCodePath/blob/master/LisitUpdated.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 ## Notes
-[x] Added support for recycler view
-[x] Can delete and re-order tasks
-[] Use a floating action button
+* [x] Added support for recycler view
+* [x] Can delete and re-order tasks
+* [] Use a floating action button
 
 
 ## License
