@@ -1,4 +1,4 @@
-package com.happytimes.alisha.database;
+package com.happytimes.alisha.model;
 
 import android.provider.BaseColumns;
 

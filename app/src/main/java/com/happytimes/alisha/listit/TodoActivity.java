@@ -4,17 +4,18 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 
-import com.happytimes.alisha.com.happytimes.alisha.fragments.EditTaskDialogFragment;
-import com.happytimes.alisha.database.Task;
-import com.happytimes.alisha.database.TaskReaderDatabaseHelper;
+import com.happytimes.alisha.fragments.EditTaskDialogFragment;
+import com.happytimes.alisha.helper.CardTouchHelper;
+import com.happytimes.alisha.model.Task;
+import com.happytimes.alisha.model.TaskReaderDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,13 @@ import java.util.List;
 public class TodoActivity extends AppCompatActivity implements EditTaskDialogFragment.EditTaskDialogListener {
 
     List<Task> taskList;
-    ArrayAdapter<Task> taskAdapter;
-    ListView listView;
+    TaskRecyclerAdapter taskAdapter;
+    RecyclerView recyclerListView;
 
     static final String TAG = "TodoActivity";
-    static final int EDIT_ITEM_REQUEST = 1; //request code
+   /* static final int EDIT_ITEM_REQUEST = 1; //request code
     static final String ITEM_POSITION = "com.happytimes.alisha.listit.ITEM_POSITION";
-    static final String ITEM_NAME = "com.happytimes.alisha.listit.ITEM_NAME";
+    static final String ITEM_NAME = "com.happytimes.alisha.listit.ITEM_NAME";*/
 
     TaskReaderDatabaseHelper dbHelper;
 
@@ -37,17 +38,30 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbHelper = TaskReaderDatabaseHelper.getInstance(this);
-        listView = (ListView) findViewById(R.id.lvItems);
         taskList = new ArrayList<>();
 
-        setUpListViewListener();
+        recyclerListView = (RecyclerView) findViewById(R.id.cardList);
+        recyclerListView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerListView.setLayoutManager(linearLayoutManager);
+
+
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (taskAdapter == null) {
+            taskAdapter = new TaskRecyclerAdapter(taskList);
+        }
+
         loadFromDB();
+
+        ItemTouchHelper.Callback callback = new CardTouchHelper(taskAdapter);
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(recyclerListView);
     }
 
     @Override
@@ -55,8 +69,8 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
         super.onPause();
     }
 
-    private void setUpListViewListener() {
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+    /*private void setUpListViewListener() {
+        recyclerListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Task selectedTask = (Task) parent.getItemAtPosition(position);
@@ -70,7 +84,7 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
 
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        recyclerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
@@ -79,7 +93,7 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
                 showEditTaskDialog(selectedTask, position);
             }
         });
-    }
+    }*/
 
     private void showEditTaskDialog(Task selectedTask, int position) {
         FragmentManager fm = getSupportFragmentManager();
@@ -92,8 +106,9 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
     public void onAddItem(View view) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String taskTitle = etNewItem.getText().toString();
-        Task t = new Task(taskTitle, "Task Desc");
+        Task t = new Task(taskTitle, "NORMAL");
         taskList.add(t);
+        taskAdapter.notifyDataSetChanged();
         etNewItem.setText("");
         writeToDB(t);
     }
@@ -106,12 +121,9 @@ public class TodoActivity extends AppCompatActivity implements EditTaskDialogFra
         taskList.addAll(list);
 
         Log.d(TAG, "List size" + taskList.size());
-        if (taskAdapter == null) {
-            taskAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, taskList);
-        }
 
-        listView.setAdapter(taskAdapter);
-        //taskAdapter.setItems(taskList);
+
+        recyclerListView.setAdapter(taskAdapter);
         taskAdapter.notifyDataSetChanged();
 
         for (Task task : taskList) {

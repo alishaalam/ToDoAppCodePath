@@ -1,4 +1,4 @@
-package com.happytimes.alisha.com.happytimes.alisha.fragments;
+package com.happytimes.alisha.fragments;
 
 
 import android.app.Activity;
@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.happytimes.alisha.database.Task;
+import com.happytimes.alisha.model.Task;
 import com.happytimes.alisha.listit.R;
 
 /**

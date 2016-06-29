@@ -1,4 +1,4 @@
-package com.happytimes.alisha.database;
+package com.happytimes.alisha.model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -69,7 +69,7 @@ public class TaskReaderDatabaseHelper extends SQLiteOpenHelper {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(TaskReaderContract.TaskEntry.COLUMN_NAME_TITLE, task.getTitle());
-        values.put(TaskReaderContract.TaskEntry.COLUMN_NAME_DESCRIPTION, task.getDescription());
+        values.put(TaskReaderContract.TaskEntry.COLUMN_NAME_PRIORITY, task.getPriority());
 
 
         // Insert the new row, returning the primary key value of the new row
@@ -142,7 +142,7 @@ public class TaskReaderDatabaseHelper extends SQLiteOpenHelper {
                 Task task = new Task();
                 task.setId(Integer.parseInt(cursor.getString(0)));
                 task.setTitle(cursor.getString(1));
-                task.setDescription(cursor.getString(2));
+                task.setPriority(cursor.getString(4));
                 // Adding task to list
                 taskList.add(task);
             } while (cursor.moveToNext());

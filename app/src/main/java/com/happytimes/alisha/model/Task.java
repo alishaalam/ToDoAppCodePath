@@ -1,4 +1,4 @@
-package com.happytimes.alisha.database;
+package com.happytimes.alisha.model;
 
 import java.util.Date;
 
@@ -23,9 +23,15 @@ public class Task {
         this.description = description;
     }
 
-    public Task(String title, String description) {
+    public Task(String title, String priority) {
+        this.title = title;
+        this.priority = priority;
+    }
+
+    public Task(String title, String description, String priority) {
         this.title = title;
         this.description = description;
+        this.priority = priority;
     }
 
     public int getId() {
